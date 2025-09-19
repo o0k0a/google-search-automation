@@ -1,0 +1,13 @@
+{
+  "name": "Claude Code Development",
+  // 実際に開発したい言語のimageにしましょう
+  "image": "mcr.microsoft.com/devcontainers/python:1-3.12-bullseye",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "lts"
+    },
+    // Claude Codeをインストール済みの状態にする
+    "ghcr.io/anthropics/devcontainer-features/claude-code:1.0": {}
+  },
+  "postCreateCommand": ""
+}

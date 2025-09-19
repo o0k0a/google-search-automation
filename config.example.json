@@ -1,0 +1,9 @@
+{
+  "google_api_key": "YOUR_GOOGLE_API_KEY",
+  "custom_search_engine_id": "YOUR_CUSTOM_SEARCH_ENGINE_ID",
+  "spreadsheet_id": "YOUR_SPREADSHEET_ID",
+  "sheet_name": "Sheet1",
+  "max_requests": 100,
+  "data_dir": "data",
+  "google_sheets_credentials_file": "credentials.json"
+}

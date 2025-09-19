@@ -1,0 +1,57 @@
+name: Google Search Automation
+
+on:
+  schedule:
+    # 日本時間午前5時 = UTC 20:00 (前日)
+    - cron: '0 20 * * *'
+  workflow_dispatch: # 手動実行も可能
+
+jobs:
+  google-search:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Create config.json from secrets
+      run: |
+        cat > config.json << EOF
+        {
+          "google_api_key": "${{ secrets.GOOGLE_API_KEY }}",
+          "custom_search_engine_id": "${{ secrets.CUSTOM_SEARCH_ENGINE_ID }}",
+          "spreadsheet_id": "${{ secrets.SPREADSHEET_ID }}",
+          "sheet_name": "${{ secrets.SHEET_NAME }}",
+          "max_requests": ${{ secrets.MAX_REQUESTS }},
+          "data_dir": "data",
+          "google_sheets_credentials_file": "credentials.json"
+        }
+        EOF
+
+    - name: Create Google Sheets credentials file
+      run: |
+        echo '${{ secrets.GOOGLE_SHEETS_CREDENTIALS }}' > credentials.json
+
+    - name: Run Google Search
+      run: |
+        python google_search.py
+
+    - name: Upload results as artifact
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: search-results-${{ github.run_number }}
+        path: |
+          data/
+          *.log
+        retention-days: 30
