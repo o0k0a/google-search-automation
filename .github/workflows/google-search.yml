@@ -25,18 +25,28 @@ jobs:
         pip install -r requirements.txt
 
     - name: Create config.json from secrets
+      env:
+        GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+        CUSTOM_SEARCH_ENGINE_ID: ${{ secrets.CUSTOM_SEARCH_ENGINE_ID }}
+        SPREADSHEET_ID: ${{ secrets.SPREADSHEET_ID }}
+        SHEET_NAME: ${{ secrets.SHEET_NAME }}
+        MAX_REQUESTS: ${{ secrets.MAX_REQUESTS }}
       run: |
-        cat > config.json << EOF
-        {
-          "google_api_key": "${{ secrets.GOOGLE_API_KEY }}",
-          "custom_search_engine_id": "${{ secrets.CUSTOM_SEARCH_ENGINE_ID }}",
-          "spreadsheet_id": "${{ secrets.SPREADSHEET_ID }}",
-          "sheet_name": "${{ secrets.SHEET_NAME }}",
-          "max_requests": ${{ secrets.MAX_REQUESTS }},
-          "data_dir": "data",
-          "google_sheets_credentials_file": "credentials.json"
+        python -c "
+        import json
+        import os
+        config = {
+            'google_api_key': os.environ.get('GOOGLE_API_KEY'),
+            'custom_search_engine_id': os.environ.get('CUSTOM_SEARCH_ENGINE_ID'),
+            'spreadsheet_id': os.environ.get('SPREADSHEET_ID'),
+            'sheet_name': os.environ.get('SHEET_NAME', 'Sheet1'),
+            'max_requests': int(os.environ.get('MAX_REQUESTS', 100)),
+            'data_dir': 'data',
+            'google_sheets_credentials_file': 'credentials.json'
         }
-        EOF
+        with open('config.json', 'w') as f:
+            json.dump(config, f, indent=2)
+        "
 
     - name: Create Google Sheets credentials file
       run: |
