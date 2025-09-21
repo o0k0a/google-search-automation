@@ -72,7 +72,7 @@ def readKeywordsFromSheet(max_count=100):
 
     return keywords, row_indices
 
-def markRowCompleted(row_index, json_data=None, link=None):
+def markRowCompleted(row_index, link=None):
     service = get_sheets_service()
     sheet = service.spreadsheets()
 
@@ -90,14 +90,6 @@ def markRowCompleted(row_index, json_data=None, link=None):
         updates.append({
             'range': f'{SHEET_NAME}!G{row_index}',
             'values': [[link]]
-        })
-
-    # H列にJSONを設定
-    if json_data:
-        json_str = json.dumps(json_data, ensure_ascii=False)
-        updates.append({
-            'range': f'{SHEET_NAME}!H{row_index}',
-            'values': [[json_str]]
         })
 
     # バッチ更新実行
@@ -212,7 +204,7 @@ if __name__ == '__main__':
             print(f"処理中 ({i}/{len(keywords)}): {keyword}")
             success, json_data, link = getSearchResponse(keyword)
             if success:
-                markRowCompleted(row_index, json_data, link)
+                markRowCompleted(row_index, link)
                 request_count += 1
                 print(f"完了 - リクエスト数: {request_count}/{MAX_REQUESTS}")
             else:
