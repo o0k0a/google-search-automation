@@ -45,7 +45,7 @@ def readKeywordsFromSheet(max_count=100):
 
     # シート全体のデータを読み込み
     # シート名に特殊文字や空白が含まれる場合に対応するため、シングルクォートで囲む
-    sheet_range = f"'{SHEET_NAME}'!A:O"
+    sheet_range = f"'{SHEET_NAME}'!A:Q"
     result = sheet.values().get(
         spreadsheetId=SPREADSHEET_ID,
         range=sheet_range
@@ -61,13 +61,13 @@ def readKeywordsFromSheet(max_count=100):
         if count >= max_count:
             break
 
-        if len(row) >= 4:  # C列とD列が存在することを確認
-            c_col = row[2].strip() if len(row) > 2 else ""  # C列（インデックス2）
-            d_col = row[3].strip() if len(row) > 3 else ""  # D列（インデックス3）
-            l_col = row[11].strip() if len(row) > 11 else ""  # L列（インデックス11）
+        if len(row) >= 6:  # E列とF列が存在することを確認
+            e_col = row[4].strip() if len(row) > 4 else ""  # E列（インデックス4）
+            f_col = row[5].strip() if len(row) > 5 else ""  # F列（インデックス5）
+            n_col = row[13].strip() if len(row) > 13 else ""  # N列（インデックス13）
 
-            if c_col and d_col and l_col != "○":  # 両方の列に値があり、L列に○がない場合
-                keyword = f"{c_col} {d_col}"
+            if e_col and f_col and n_col != "○":  # 両方の列に値があり、N列に○がない場合
+                keyword = f"{e_col} {f_col}"
                 keywords.append(keyword)
                 row_indices.append(row_index + 1)  # Sheets APIは1-based
                 count += 1
@@ -81,17 +81,17 @@ def markRowCompleted(row_index, link=None):
     # 更新する値を準備
     updates = []
 
-    # L列に○を設定
+    # N列に○を設定
     # シート名に特殊文字や空白が含まれる場合に対応するため、シングルクォートで囲む
     updates.append({
-        'range': f"'{SHEET_NAME}'!L{row_index}",
+        'range': f"'{SHEET_NAME}'!N{row_index}",
         'values': [["○"]]
     })
 
-    # M列にlinkを設定
+    # O列にlinkを設定
     if link:
         updates.append({
-            'range': f"'{SHEET_NAME}'!M{row_index}",
+            'range': f"'{SHEET_NAME}'!O{row_index}",
             'values': [[link]]
         })
 
