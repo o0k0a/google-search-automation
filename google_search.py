@@ -61,13 +61,13 @@ def readKeywordsFromSheet(max_count=100):
         if count >= max_count:
             break
 
-        if len(row) >= 6:  # E列とF列が存在することを確認
+        if len(row) >= 7:  # E列とG列が存在することを確認
             e_col = row[4].strip() if len(row) > 4 else ""  # E列（インデックス4）
-            f_col = row[5].strip() if len(row) > 5 else ""  # F列（インデックス5）
-            n_col = row[13].strip() if len(row) > 13 else ""  # N列（インデックス13）
+            g_col = row[6].strip() if len(row) > 6 else ""  # G列（インデックス6）
+            o_col = row[14].strip() if len(row) > 14 else ""  # O列（インデックス14）
 
-            if e_col and f_col and n_col != "○":  # 両方の列に値があり、N列に○がない場合
-                keyword = f"{e_col} {f_col}"
+            if e_col and g_col and o_col != "○":  # 両方の列に値があり、O列に○がない場合
+                keyword = f"{e_col} {g_col}"
                 keywords.append(keyword)
                 row_indices.append(row_index + 1)  # Sheets APIは1-based
                 count += 1
@@ -81,17 +81,17 @@ def markRowCompleted(row_index, link=None):
     # 更新する値を準備
     updates = []
 
-    # N列に○を設定
+    # O列に○を設定
     # シート名に特殊文字や空白が含まれる場合に対応するため、シングルクォートで囲む
     updates.append({
-        'range': f"'{SHEET_NAME}'!N{row_index}",
+        'range': f"'{SHEET_NAME}'!O{row_index}",
         'values': [["○"]]
     })
 
-    # O列にlinkを設定
+    # P列にlinkを設定
     if link:
         updates.append({
-            'range': f"'{SHEET_NAME}'!O{row_index}",
+            'range': f"'{SHEET_NAME}'!P{row_index}",
             'values': [[link]]
         })
 
